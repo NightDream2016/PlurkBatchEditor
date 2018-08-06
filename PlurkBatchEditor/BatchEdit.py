@@ -52,7 +52,7 @@ def requestOauthClientWithUserAuthentication(appKey, appSecret):
 	oauth_token = accessTokenParseResult[b'oauth_token'][0].decode('utf-8')
 	oauth_token_secret = accessTokenParseResult[b'oauth_token_secret'][0].decode('utf-8')
 
-	print('Token:'+ oauth_token + '\nSecret:' + oauth_token_secret)
+	# print('Token:'+ oauth_token + '\nSecret:' + oauth_token_secret)
 
 	client = requestOauthClient (appKey, appSecret, oauth_token, oauth_token_secret)
 
