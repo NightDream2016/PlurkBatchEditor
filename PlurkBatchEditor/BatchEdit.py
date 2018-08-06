@@ -238,14 +238,14 @@ def main():
 			jsonPlurkResult = json.loads(result[1].decode('utf-8'))
 			print (jsonPlurkResult)
 		elif choose == '2':
-			time = input('TimeOffset:')
+			time = input('TimeOffset:(YYYY-MM-DDTHH:MM:SS)')
 			limit = input('Limit:')
 			filter = input('filter:')
 			result = getPlurks(client, time, limit, filter)
 			jsonPlurkResult = json.loads(result[1].decode('utf-8'))
 			print (jsonPlurkResult)
 		elif choose == '3':
-			time = input('TimeOffset:')
+			time = input('TimeOffset:(YYYY-MM-DDTHH:MM:SS)')
 			limit = input('Limit:')
 			filter = input('filter:')
 			result = getUnreadPlurks(client, time, limit, filter)
@@ -257,7 +257,7 @@ def main():
 			jsonPlurkResult = json.loads(result[1].decode('utf-8'))
 			print (jsonPlurkResult)
 		elif choose == '5':
-			time = input('TimeOffset:')
+			time = input('TimeOffset:(YYYY-MM-DDTHH:MM:SS)')
 			limit = input('Limit:')
 			filter = input('filter:')
 			result = getPlurks_Multitimes(client, time, limit, filter)
@@ -275,7 +275,7 @@ def main():
 			jsonPlurkResult = json.loads(result[1].decode('utf-8'))
 			print (jsonPlurkResult)
 		elif choose == '8':
-			time = input('TimeOffset:')
+			time = input('TimeOffset:(YYYY-MM-DDTHH:MM:SS)')
 			limit = input('Limit:')
 			filter = input('filter:')
 			plurksToDelete = getPlurks_Multitimes(client, time, limit, filter)
