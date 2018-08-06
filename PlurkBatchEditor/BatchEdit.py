@@ -11,8 +11,7 @@ OAUTH_REQUEST_TOKEN = 'https://www.plurk.com/OAuth/request_token'
 OAUTH_ACCESS_TOKEN = 'https://www.plurk.com/OAuth/access_token'
 OAUTH_VERIFIER = 'https://www.plurk.com/OAuth/authorize'
 
-APP_KEY = 'DzatQ4N7LTA7'
-APP_SECRET = 'lYGmeBz3YRWDpOaGAQ5EyTIrZkWscH1L'
+
 
 #endregion
 
@@ -34,11 +33,11 @@ def get_access_token(app_key, app_secret, oauth_token, oauth_token_secret, oauth
 	response = client.request(OAUTH_ACCESS_TOKEN, method='POST')
 	return response
 
-def requestOauthClientWithUserAuthentication():
+def requestOauthClientWithUserAuthentication(appKey, appSecret):
 
 	print ("Start Get Request Token")
 
-	requestTokenResponse = get_request_token(APP_KEY, APP_SECRET)
+	requestTokenResponse = get_request_token(appKey, appSecret)
 	requestTokenParseResult = urllib.parse.parse_qs(requestTokenResponse[1])
 	oauth_token = requestTokenParseResult[b'oauth_token'][0].decode('utf-8')
 	oauth_token_secret = requestTokenParseResult[b'oauth_token_secret'][0].decode('utf-8')
@@ -47,7 +46,7 @@ def requestOauthClientWithUserAuthentication():
 
 	verifier = input("authorize code:")
 
-	accessTokenResult = get_access_token(APP_KEY, APP_SECRET, oauth_token, oauth_token_secret, verifier) 
+	accessTokenResult = get_access_token(appKey, appSecret, oauth_token, oauth_token_secret, verifier) 
 	accessTokenParseResult = urllib.parse.parse_qs( accessTokenResult[1]);
 
 	oauth_token = accessTokenParseResult[b'oauth_token'][0].decode('utf-8')
@@ -55,13 +54,13 @@ def requestOauthClientWithUserAuthentication():
 
 	print('Token:'+ oauth_token + '\nSecret:' + oauth_token_secret)
 
-	client = requestOauthClient (oauth_token, oauth_token_secret)
+	client = requestOauthClient (appKey, appSecret, oauth_token, oauth_token_secret)
 
 	return client
 
-def requestOauthClient(oauth_token, oauth_token_secret):
+def requestOauthClient(appKey, appSecret, oauth_token, oauth_token_secret):
 	
-	consumer = oauth.Consumer(APP_KEY, APP_SECRET)
+	consumer = oauth.Consumer(appKey, appSecret)
 	token = oauth.Token(oauth_token, oauth_token_secret)
 	client = oauth.Client(consumer, token)
 
@@ -69,8 +68,8 @@ def requestOauthClient(oauth_token, oauth_token_secret):
 
 	return client
 
-def requestOauthClientFromString(tokenString):
-	consumer = oauth.Consumer(APP_KEY, APP_SECRET)
+def requestOauthClientFromString(appKey, appSecret, tokenString):
+	consumer = oauth.Consumer(appKey, appSecret)
 	token = oauth.Token.from_string(tokenString)
 	client = oauth.Client(consumer, token)
 
@@ -199,10 +198,16 @@ def main():
 	isAuthenticated = False
 
 	while isAuthenticated == False:
+		appKeyFile = open('Auth.txt', 'r', encoding = 'UTF-8')
+		content = appKeyFile.readlines()
+		appKey = content[0].rstrip()
+		appSecret = content[1].rstrip()
+		appKeyFile.close()
+
 		print('Request Client Data With:\n1.User Authentication\n2.Authentication token and secret(Input)\n3.Read File')
 		choose = input("Input:")
 		if choose == '1':
-			client = requestOauthClientWithUserAuthentication()
+			client = requestOauthClientWithUserAuthentication(appKey, appSecret)
 			tokenfile = open('requestToken', 'w', encoding = 'UTF-8') 
 			tokenfile.write(client.token.to_string())
 			tokenfile.close()
@@ -210,13 +215,14 @@ def main():
 		elif choose == '2':
 			oauth_token = input("token:")
 			oauth_token_secret = input("token_secret:")
-			client = requestOauthClient(oauth_token, oauth_token_secret)
+			client = requestOauthClient(appKey, appSecret, oauth_token, oauth_token_secret)
 			isAuthenticated = True
 		elif choose == '3':
 			file = open('requestToken', 'r', encoding='UTF-8')
 			content = file.read()
+			content = content.rstrip()
 			file.close()
-			client = requestOauthClientFromString(content)
+			client = requestOauthClientFromString(appKey, appSecret, content)
 			isAuthenticated = True
 		else:
 			print('Unknown Command. Continue.')
@@ -224,7 +230,7 @@ def main():
 
 	while True:
 		print('Please Choose Your Command:')
-		print('1.GetProfile\n2.GetPlurks\n3.GetUnreadPlurks\n4.DeletePlurk\n5.GetPlurks(WithMultiLoad)\n6.GetPlurk(id)\n7.EditPlurk\n8.MultipleDeletePlurk\n9.My User Data\n10.Expire Token')
+		print('1.GetProfile\n2.GetPlurks\n3.GetUnreadPlurks\n4.DeletePlurk\n5.GetPlurks(WithMultiLoad)\n6.GetPlurk(id)\n7.EditPlurk\n8.MultipleDeletePlurk\n9.My User Data\n10.Expire Token\n11.Quit')
 		choose = input("Input:")
 		result = ''
 		if choose == '1':
@@ -273,7 +279,7 @@ def main():
 			limit = input('Limit:')
 			filter = input('filter:')
 			plurksToDelete = getPlurks_Multitimes(client, time, limit, filter)
-			failedIDList = plurkDelete_Mulitple(client, plurksToDelete, preservedIDs)
+			failedIDList = plurkDelete_Mulitple(client, plurksToDelete, [])
 			print(failedIDList)
 		elif choose == '9':
 			result = getUsersMe(client)
@@ -281,7 +287,8 @@ def main():
 			print(jsonResult)
 		elif choose == '10':
 			result = expireToken(client)
-
+		elif choose == '11':
+			break
 		else:
 			print('Unknown Command. Continue.')
 			continue
