@@ -4,7 +4,7 @@ import urllib.parse
 import array
 import webbrowser
 import datetime
-
+import Plurk
 #region PreDefine
 
 OAUTH_REQUEST_TOKEN = 'https://www.plurk.com/OAuth/request_token'
@@ -47,7 +47,7 @@ def requestOauthClientWithUserAuthentication(appKey, appSecret):
 	verifier = input("authorize code:")
 
 	accessTokenResult = get_access_token(appKey, appSecret, oauth_token, oauth_token_secret, verifier) 
-	accessTokenParseResult = urllib.parse.parse_qs( accessTokenResult[1]);
+	accessTokenParseResult = urllib.parse.parse_qs( accessTokenResult[1])
 
 	oauth_token = accessTokenParseResult[b'oauth_token'][0].decode('utf-8')
 	oauth_token_secret = accessTokenParseResult[b'oauth_token_secret'][0].decode('utf-8')
@@ -95,6 +95,7 @@ def getPlurk(client, id):
 	bodyData = {'plurk_id' : id}
 	resultUrlString = urllib.parse.urlencode(bodyData)
 	response = client.request(apiUrl, method='POST', body = resultUrlString.encode('utf-8'))
+	# plurk = Plurk.parseFromJSON(response)
 	return response
 
 def getPlurks(client, offset, limit, filter):
@@ -116,7 +117,7 @@ def getPlurks_Multitimes(client, offset, limit, filter):
 		getPlurkList += currentPlurkResult['plurks']
 		lastResult = getPlurkList[-1]
 		timeOfLastResult = datetime.datetime.strptime(lastResult['posted'], '%a, %d %b %Y %H:%M:%S GMT')
-		offsetTimeResult = timeOfLastResult.strftime('%Y-%m-%dT%H:%M:%S');
+		offsetTimeResult = timeOfLastResult.strftime('%Y-%m-%dT%H:%M:%S')
 
 	return getPlurkList
 
@@ -243,6 +244,10 @@ def main():
 			filter = input('filter:')
 			result = getPlurks(client, time, limit, filter)
 			jsonPlurkResult = json.loads(result[1].decode('utf-8'))
+		
+			# for result in jsonPlurkResult:
+				# plurk = Plurk.parseFromJSON(result)
+
 			print (jsonPlurkResult)
 		elif choose == '3':
 			time = input('TimeOffset:(YYYY-MM-DDTHH:MM:SS)')
