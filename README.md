@@ -7,5 +7,5 @@ a script that using python SDK (based on Restful API) to access [Plurk](https://
 python3 ./plurk.py
 
 # Thanks for 
-[Python SDK Of Plurk](https://github.com/joestump/python-oauth2)
+[Plurk-OAuth](https://github.com/clsung/plurk-oauth)
 
