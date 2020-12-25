@@ -6,6 +6,7 @@ a script that using python SDK (based on Restful API) to access [Plurk](https://
 
 # Usage
 1. [Create a Plurk App Key & Secret here.](https://www.plurk.com/PlurkApp/)
+   And input them in AppKey.txt.
 2. Install requirement
    ```
    pip3 install -r requirement.txt --user
