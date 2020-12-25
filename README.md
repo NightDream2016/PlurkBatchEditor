@@ -1,4 +1,4 @@
-# PlurkBatchEditor
+# Plurk Batch Editor
 
 a script that using python SDK (based on Restful API) to access [Plurk](https://www.plurk.com/) with main feature.
 
